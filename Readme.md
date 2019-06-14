@@ -23,7 +23,7 @@ CTLearn, hyperopt, sklearn, multiprocessing, os, re , yaml, numpy, logging, pick
 
 ## Basic usage
 
-The outputs of a optimization session are:
+The outputs of an optimization session are:
 
   - `optimization.log` file containg messages about the optimization run.
   - `checking_file.csv ` file containing loss, iteration, hyperparameters, metrics and training_time. This file is updated each iteration.
