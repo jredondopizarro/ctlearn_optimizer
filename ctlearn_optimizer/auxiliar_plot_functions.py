@@ -1,6 +1,6 @@
 
 
-#taken from skopt.plots andslightly modified
+#taken from skopt.plots and slightly modified
 def plot_convergence(*args):
     import matplotlib.cm as cm
     import matplotlib.pyplot as plt

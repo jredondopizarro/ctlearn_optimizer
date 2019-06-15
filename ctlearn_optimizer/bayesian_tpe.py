@@ -26,17 +26,19 @@ def modify_optimizable_params(self, hyperparams):
     iteration = self.iteration
 
     #flatten optimizable hyperparameters dict if required
-    flat_hyperparams = {}
-    for key in hyperparams:
-        if type(hyperparams[key]) is not dict:
-            flat_hyperparams.update({key: hyperparams[key]} )
-        else:
-            for dummy_key in hyperparams[key]:
-                flat_hyperparams.update({dummy_key: hyperparams[key][dummy_key] })
-    hyperparams = flat_hyperparams
+    def aux_flat(hyperparams):
+        flat_hyperparams = {}
+        for key, item in hyperparams.items():
+            if type(item) is not dict:
+                flat_hyperparams.update({key: item})
+            else:
+                flat_hyperparams.update(aux_flat(item))
+        return flat_hyperparams
 
-    #correct hyperparameters to optimize keys (hyperopt space creator doesn't support
-    #repeated labels, so a ! character is appended to each repeated label)
+    hyperparams = aux_flat(hyperparams)
+
+    #correct hyperparameters_to_optimize keys (hyperopt space creator doesn't
+    #support repeated labels, so a ! character is appended to each repeated label)
     corrected_hyperparams = {}
     for key in hyperparams:
      if key.endswith('!'):
@@ -64,7 +66,8 @@ def modify_optimizable_params(self, hyperparams):
 
     #set model and prediction_file_path
     myconfig['Logging']['model_directory'] = './run' + str(iteration)
-    myconfig['Prediction']['prediction_file_path'] = './run' + str(iteration) + '/predictions_run{}.csv'.format(iteration)
+    myconfig['Prediction']['prediction_file_path'] = \
+    './run' + str(iteration) + '/predictions_run{}.csv'.format(iteration)
 
     with open(self.ctlearn_config, 'w') as config:
         yaml.dump(myconfig, config)
@@ -81,87 +84,79 @@ def hyperopt_space(self):
         hyperopt style hyperparameters space to be fed into hyperopt fmin
     """
 
+    def aux_hyperopt(key, typee, rangee, keys_list, step = None,):
+        dict_type = {'uniform': hp.uniform,
+                     'quniform': hp.quniform,
+                     'loguniform': hp.loguniform,
+                     'qloguniform': hp.qloguniform,
+                     'normal': hp.normal,
+                     'qnormal': hp.qnormal,
+                     'lognormal': hp.lognormal,
+                     'qlognormal': hp.qlognormal,
+                     'choice': hp.choice,
+                     'conditional': hp.choice}
+
+        if typee in ('uniform', 'quniform', 'normal', 'qnormal'):
+            if typee in ('uniform', 'normal'):
+                element = {key: dict_type[typee](key, rangee[0], rangee[1])}
+            else:
+                element = {key: scope.int(dict_type[typee](key, rangee[0],
+                           rangee[1], step))}
+
+        elif typee in ('loguniform', 'qloguniform', 'lognormal', 'qlognormal'):
+            if typee in ('loguniform', 'lognormal'):
+                element = {key: dict_type[typee](key, np.log(rangee[0]),
+                           np.log(rangee[1]))}
+            else:
+                element = {key: scope.int(dict_type[typee](key, np.log(rangee[0]),
+                           np.log(rangee[1]), step))}
+
+        elif typee in ('choice'):
+            element = {key: dict_type[typee](key, [item for item in rangee])}
+
+        #type is conditional
+        else:
+            stream_list = []
+            for item in rangee:
+                stream_dict = {}
+                stream_dict.update({key:item['value']})
+
+                for key_item, item in item['cond_params'].items():
+                    #append a ! character to repeated keys
+                    while key_item in keys_list:
+                        key_item =  key_item + '!'
+                    keys_list.append(key_item)
+
+                    if 'step' in item:
+                        aux = aux_hyperopt(key_item, item['type'], item['range'],
+                                           keys_list, item['step'])
+                        stream_dict.update(aux[0])
+                        keys_list = aux[1]
+                    else:
+                        aux = aux_hyperopt(key_item, item['type'], item['range'],
+                                           keys_list)
+                        stream_dict.update(aux[0])
+                        keys_list = aux[1]
+                stream_list.append(stream_dict)
+            element = {key: dict_type[typee](key, stream_list)}
+
+        return element, keys_list
+
+    #params = self.opt_config['Hyperparameters']['Hyperparameters_to_optimize']
     params = self.opt_config['Hyperparameters']['Hyperparameters_to_optimize']
     if params is None:
         raise KeyError('Hyperparameters_to_optimize is empty')
     space = {}
     keys_list = []
-    for key, items in params.items():
-        if items['type'] == 'uniform':
-            space.update(
-                {key: hp.uniform(key, items['range'][0], items['range'][1])})
-        elif items['type'] == 'quniform':
-            space.update(
-                {key: scope.int(hp.quniform(key, items['range'][0], items['range'][1], items['step']))})
-        elif items['type'] == 'loguniform':
-            space.update(
-                {key: hp.loguniform(key, np.log(items['range'][0]), np.log(items['range'][1]))})
-        elif items['type'] == 'qloguniform':
-            space.update(
-                {key: scope.int(hp.qloguniform(key, np.log(items['range'][0]), np.log(items['range'][1]), items['step']))})
-        elif items['type'] == 'normal':
-            space.update(
-                {key: hp.normal(key, items['range'][0], items['range'][1])})
-        elif items['type'] == 'qnormal':
-            space.update(
-                {key: scope.int(hp.qnormal(key, items['range'][0], items['range'][1], items['step']))})
-        elif items['type'] == 'lognormal':
-            space.update(
-                {key: hp.lognormal(key, np.log(items['range'][0]), np.log(items['range'][1]))})
-        elif items['type'] == 'qlognormal':
-            space.update(
-                {key: scope.int(hp.qlognormal(key, np.log(items['range'][0]), np.log(items['range'][1]), items['step']))})
-        elif items['type'] == 'choice':
-            space.update(
-                {key: hp.choice(key, [element for element in items['range']])})
-
-        elif items['type'] == 'conditional':
-            stream_list = []
-
-            for element in items['range']:
-                stream_dict = {}
-                stream_dict.update({key:element['value']})
-
-                for key_element in element['cond_params']:
-                    stream_elem = element['cond_params'][key_element]
-                    #append a ! character to repeated keys
-                    while key_element in keys_list:
-                        key_element = key_element + '!'
-                    keys_list.append(key_element)
-
-                    if stream_elem['type'] == 'uniform':
-                        stream_dict.update(
-                            {key_element: hp.uniform(key_element, stream_elem['range'][0], stream_elem['range'][1])})
-                    elif stream_elem['type'] == 'quniform':
-                        stream_dict.update(
-                            {key_element: scope.int(hp.quniform(key_element, stream_elem['range'][0], stream_elem['range'][1],stream_elem['step']))})
-                    elif stream_elem['type'] == 'loguniform':
-                        stream_dict.update(
-                            {key_element: hp.loguniform(key_element, no.log(stream_elem['range'][0]), np.log(stream_elem['range'][1]))})
-                    elif stream_elem['type'] == 'qloguniform':
-                        stream_dict.update(
-                            {key_element: scope.int(hp.qloguniform(key_element, np.log(stream_elem['range'][0]), np.log(stream_elem['range'][1]), stream_elem['step']))})
-                    elif stream_elem['type'] == 'normal':
-                        stream_dict.update(
-                            {key_element: hp.normal(key_element, stream_elem['range'][0], stream_elem['range'][1])})
-                    elif stream_elem['type'] == 'qnormal':
-                        stream_dict.update(
-                            {key_element: scope.int(hp.qnormal(key_element, stream_elem['range'][0], stream_elem['range'][1], stream_elem['step']))})
-                    elif stream_elem['type'] == 'lognormal':
-                        stream_dict.update(
-                            {key_element: hp.lognormal(key_element, np.log(stream_elem['range'][0]), np.log(stream_elem['range'][1]))})
-                    elif stream_elem['type'] == 'qlognormal':
-                        stream_dict.update(
-                            {key_element: scope.int(hp.qlognormal(key_element, np.log(stream_elem['range'][0]), np.log(stream_elem['range'][1]), stream_elem['step']))})
-                    elif stream_elem['type'] == 'choice':
-                        stream_dict.update(
-                            {key_element: hp.choice(key_element, [element for element in stream_elem['range']])})
-                    elif stream_elem['type'] == 'conditional':
-                        raise Exception('Nested conditions are not supported')
-
-                stream_list.append(stream_dict)
-            space.update({key: hp.choice(key, stream_list)})
-
+    for key, item in params.items():
+        if 'step' in item:
+            aux = aux_hyperopt(key, item['type'], item['range'], keys_list, item['step'])
+            space.update(aux[0])
+            keys_list = aux[1]
+        else:
+            aux = aux_hyperopt(key, item['type'], item['range'], keys_list)
+            space.update(aux[0])
+            keys_list = aux[1]
     return space
 
 def objective(self, hyperparams):
