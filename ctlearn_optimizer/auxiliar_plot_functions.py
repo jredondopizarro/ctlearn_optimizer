@@ -40,5 +40,6 @@ def plot_convergence(*args):
 
             ax.plot(iterations, np.mean(mins, axis=0), c=color,
                     marker=".", markersize=12, lw=2, label=name)
-
+                    
+    ax.legend(loc='best')
     return ax
