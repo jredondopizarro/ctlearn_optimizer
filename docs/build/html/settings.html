@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuration &mdash; ctlearn_optimizer 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Package Reference" href="api.html" />
+    <link rel="prev" title="Basic usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ctlearn_optimizer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Basic usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-settings">General settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-config-settings">Basic config settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hyperparameters-settings">Hyperparameters settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ctlearn_optimizer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Configuration</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/settings.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>The configuration of ctlearn_optimizer is stored in a YAML configuration file,
+every available settings and its possible values are listed and explained in
+detail in subsequent sections.</p>
+<div class="section" id="general-settings">
+<h2>General settings<a class="headerlink" href="#general-settings" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_cpus</span></code> (<em>mandatory, int</em>): number of cpu cores the user wishes the optimizer to be configured with.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> (<em>mandatory, int</em>): number of gpus the user wishes the optimizer to be configured with.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_cpus_per_trial</span></code> (<em>mandatory, int</em>): number of cpu cores to allocate per trial. Recommended value:
+<code class="docutils literal notranslate"><span class="pre">num_cpus</span></code>/<code class="docutils literal notranslate"><span class="pre">num_parallel_trials</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_gpus_per_trial</span></code> (<em>mandatory, int</em>): number of gpus to allocate per trial. Recommended value = 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> (<em>mandatory, str</em>): optimization algorithm. Valid options: ‘tree_parzen_estimators’,
+‘random_search’, ‘gaussian_processes’, ‘genetic_algorithm’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_parallel_trials</span></code> (<em>default = 1, int</em>):  number of maximum concurrent trials. Recommended value = 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code> (<em>default = ‘max’, str</em>):  determines whether to maximize or minize the metric. Valid options: ‘max’, ‘min’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">working_directory</span></code> (<em>default = ‘current directory_path’, str</em>): path to the optimizer working directory.
+Recommended value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctlearn_config</span></code> (<em>mandatory, str</em>): name of the CTLearn config file stored in the <code class="docutils literal notranslate"><span class="pre">working_directory</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_startup_jobs</span></code> (<em>default = 30, int</em>): number of initial random evaluations of the objective before starting to
+approximating it with the surrogate model. Not used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘genetic_algorithm’ or ‘random_search’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_max_evals</span></code> (<em>mandatory, int</em>): number of evaluations of the objective function.
+approximating it with the surrogate model. Not used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘genetic_algorithm’ or ‘random_search’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_state</span></code> (<em>default = None, [int or None]</em>): set random state to something other than None for reproducible results.
+Not used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘genetic_algorithm’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove_training_folders</span></code> (<em>default = True, bool</em>): determines whether to remove the logging folders generated by CTLearn.
+This option is useful for avoiding disk space issues in long optimization runs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reload_trials</span></code> (<em>default = False, bool</em>): set this option to True for loading trials of a past run
+from <code class="docutils literal notranslate"><span class="pre">working_directory/trials.pkl</span></code>. This option allows to resume a past optimization run.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reload_optimization_results</span></code> (<em>default = False, bool</em>): set this option to True for loading the optimization results file
+of a past run from <code class="docutils literal notranslate"><span class="pre">working_directory/optimization_results.csv</span></code>.  Recommended value = the same as in <code class="docutils literal notranslate"><span class="pre">reload_trials</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree_parzen_estimators_config</span></code> (<em>default = None, dict</em>): configuration for tree parzen estimators based optimization.
+Used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘tree_parzen_estimators’. Recommend value = default.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code> (<em>default = 0.25, float in range (0,1)</em>): see
+<a class="reference external" href="https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf">this paper</a>, section 4.
+Recommend value = default.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gaussian_processes_config</span></code> (<em>default = None, dict</em>):  configuration for gaussian processes based optimization.
+Used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘gaussian_processes’. Recommended value = default.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">base_estimator</span></code> (<em>default = ‘GP’, str</em>): surrogate model to use. Valid options:  ‘GP’, ‘RF’, ‘ET’, ‘GBRT’.
+‘GP’: Gaussian Processes; ‘RF’: Random Forests, ‘ET’: Extended Trees,
+‘GBRT’: Gradient Boosted Trees. Recommended value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acq_function</span></code> (<em>default = ‘gp_hedge’, str</em>): acquisition function to use. Valid options:’LCB’, ‘EI’, ‘PI’, ‘gp_hedge’.
+‘LCB’: lower confidence bound, ‘EI’: negative expected improvement, ‘PI’: negative probability of improvement,
+‘gp_hedge’: probabilistically choose one of the previous three acquisition functions at every iteration.
+Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acq_optimizer</span></code> (<em>default = ‘gp_hedge’, str</em>): method to optimize the acquisition function, the <code class="docutils literal notranslate"><span class="pre">base_estimator</span></code>
+model is updated with  the optimal value obtained by optimizing <code class="docutils literal notranslate"><span class="pre">acq_func</span></code> with <code class="docutils literal notranslate"><span class="pre">acq_optimizer</span></code>.
+Valid options: ‘auto’, ‘sampling’, ‘lbfgs’. Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xi</span></code> (<em>default = 0.01, float</em>):  controls how much improvement the user wants over the previous best values.
+Used when the acquisition is either “EI” or “PI”. Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code> (<em>default = 1.96, float</em>): controls how much of the variance in the predicted values should be taken
+into account. If set to be very high, then we are favouring exploration over exploitation and vice versa.
+Used when the acquisition is “LCB”. Recommend value = default.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">genetic_algorithm_config</span></code> (<em>default = None, dict</em>):  configuration for genetic algorithm based optimization.
+Used if <code class="docutils literal notranslate"><span class="pre">optimization_type</span></code> == ‘genetic_algorithm’.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">max_generation</span></code> (<em>mandatory, int</em>): maximum iteration number of genetic search. This value will be used instead of <code class="docutils literal notranslate"><span class="pre">num_max_evals</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">population_size</span></code> (<em>mandatory, int</em>): number of trials of the initial generation. This value will be used instead of <code class="docutils literal notranslate"><span class="pre">num_parallel_trials</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">population_decay</span></code> (<em>default = 0.95, float in range(0,1)</em>): decay ratio of population size for the next generation.
+Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keep_top_ratio:</span></code> (<em>default = 0.2, float in range(0,1)</em>): ratio of the top performance population.
+Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keep_top_ratio:</span></code> (<em>default = 0.4, float in range(0,1)</em>): threshold for performing selection.
+Recommend value = default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keep_top_ratio:</span></code> (<em>default = 0.4, float in range(0,1)</em>): threshold for performing crossover.
+Recommend value = default.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">predict</span></code> (<em>default = False, bool</em>):  whether to predict using the trained CTLearn model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_set_to_optimize</span></code> (<em>default = ‘validation’, str</em>): if this option is set to
+‘validation’, <code class="docutils literal notranslate"><span class="pre">predict</span></code> must be set to True. Valid options: ‘validation’, ‘prediction’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metrics_val_to_log</span></code> (<em>mandatory, list</em>): validation set metrics to log to the optimization_results file.
+Valid options: [‘auc’, ‘acc’, ‘acc_gamma’, ‘acc_proton’, ‘loss’, <code class="docutils literal notranslate"><span class="pre">user_defined_metric_val</span> <span class="pre">(label)</span></code>].
+It is required to log at least the metric  that is being optimized, _val will be appended to each metric label logged.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metrics_pred_to_log</span></code> (<em>default = [], list</em>): prediction set metrics to log to the optimization_results file.
+Valid options: [‘auc’, ‘acc’, ‘bacc’, ‘f1’, ‘prec’, ‘rec’, ‘log_loss’, <code class="docutils literal notranslate"><span class="pre">user_defined_metric_pred(label)</span></code>].
+Used if <a href="#id1"><span class="problematic" id="id2">``</span></a>predict` == ‘True’
+It is required to log at least the metric that is being optimized, _pred will be appended to each metric label logged.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metric_to_optimize</span></code> (<em>mandatory, str</em>): label of the metric to optimize. Valid options: any metric included in <code class="docutils literal notranslate"><span class="pre">metrics_val_to_log</span></code>
+or <code class="docutils literal notranslate"><span class="pre">metrics_pred_to_log</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_defined_metric_val</span></code> (<em>default = None, dict</em>):  configuration for the user defined metric to be computed on
+the validation set.</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code> (<em>mandatory, str</em>): user_defined_metric_val label.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expression</span></code> (<em>mandatory, str</em>): user_defined_metric_val expression to be computed. This expression has
+access to [‘auc’, ‘acc’, ‘acc_gamma’, ‘acc_proton’, ‘loss’] (from validation set).
+Example:</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="s1">&#39;(auc + accuracy_gamma)*0.5&#39;</span><span class="o">.</span><span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_defined_metric_pred</span></code> (<em>default = None, dict</em>):  configuration for the user defined metric to be computed on the
+prediction set.</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code> (<em>mandatory, str</em>): user_defined_metric_pred label.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expression</span></code> (<em>mandatory, str</em>): user_defined_metric_pred expression to be computed. This expression has
+access to [‘auc’, ‘accuracy’, ‘bacc’, ‘f1’, ‘prec’, ‘rec’, ‘log_loss’] (from prediction set); besides, expression
+has access to [labels, gamma_classifier_values, predicted_class] and sklearn.metrics.
+Example:</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="s1">&#39;(auc + f1 + sklearn.metrics.balanced_accuracy_score(labels, predicted_class))*0.5&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="basic-config-settings">
+<h2>Basic config settings<a class="headerlink" href="#basic-config-settings" title="Permalink to this headline">¶</a></h2>
+<p>These are CTLearn related configuration options that have been included in
+this package in order improve it’s functionality and ease of use. The user
+can refer to CTLearn v0.3.0 <a class="reference external" href="https://github.com/ctlearn-project/ctlearn/blob/v031/config/example_config.yml">example_config file</a>
+for additional information.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code> (<em>default = None, int</em>): seed for randomly splitting data into training and validation sets.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_validations:</span></code> (<em>mandatory = None, int</em>):  number of validations made before finishing training. If 0, run forever.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_training_steps_per_validation</span></code> (<em>mandatory, int</em>): number of training steps to run before each evaluation on the validation set.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">example_type</span></code> (<em>mandatory, str</em>): how to construct examples from the data. Valid options: ‘array’, ‘single_tel’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model</span></code> (<em>mandatory, str</em>):  Valid options: ‘cnn_rnn’, ‘single_tel’. If this option is set to ‘cnn_rnn’, <code class="docutils literal notranslate"><span class="pre">example_type</span></code> must be
+set to ‘array’,  if this option is set to ‘single_tel’, <code class="docutils literal notranslate"><span class="pre">example_type</span></code> must beset to ‘single_tel’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sorting</span></code> (<em>default = ‘null’, str</em>): how to sort telescope images when loading data in array mode. Valid options: ‘trigger’, ‘size’, ‘null’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_num_tels</span></code> (<em>default = 1, int</em>): minimum number of triggered telescopes among all selected telescopes (of all types) which
+must be present for an event to be loaded. Telescopes that aren’t selected don’t count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">selected_tel_types</span></code> (<em>mandatory, str</em>): list of telescope types to load. Valid options: ‘LST:LSTCam’, ‘MST:FlashCam’, ‘MST:NectarCam’,
+‘SCT:SCTCam’, ‘SST:DigiCam’, ‘SST:ASTRICam’, ‘SST:CHEC’, ‘MST:VERITAS’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">training_file_list</span></code> (<em>mandatory, str</em>): name of a file stored in the <code class="docutils literal notranslate"><span class="pre">working_directory</span></code>
+listing data file paths for training, one per line.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prediction_file_list</span></code> (<em>not mandatory, str</em>): name of a file stored in the <code class="docutils literal notranslate"><span class="pre">working_directory</span></code>
+listing data file paths for predicting, one per line. Mandatory if <code class="docutils literal notranslate"><span class="pre">predict</span></code> == True.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code> (<em>mandatory, int</em>):  number of examples per batch for training/prediction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_directory</span></code> (<em>default = null, str</em>):  path to directory containing model module. Default if  null is to load
+CTLearn default models directory: ‘ctlearn/ctlearn/default_models/’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validation_split</span></code> (<em>default = 0.1, float</em>): randomly chosen fraction of data to set aside for validation.</p></li>
+</ul>
+</div>
+<div class="section" id="hyperparameters-settings">
+<h2>Hyperparameters settings<a class="headerlink" href="#hyperparameters-settings" title="Permalink to this headline">¶</a></h2>
+<p>The choice of the labels of the hyperparameters in this section is left
+to the user , but they must be the same in all the configuration options.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hyperparameters_to_log</span></code> (<em>mandatory, list</em>):  labels of  hyperparameters the user wishes to log to the optimization_results file.
+At least one label is mandatory. Example: see opt_config_example.yml</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">config</span></code> (<em>mandatory, dict</em>):  dictionary containing {hyperparameter label : list containing hyperparameter
+CTLearn configuration} items. The configuration of each hyperparameter label used in  <code class="docutils literal notranslate"><span class="pre">fixed_hyperparameters</span></code>,
+<code class="docutils literal notranslate"><span class="pre">dependent_hyperparameters</span></code> and <code class="docutils literal notranslate"><span class="pre">hyperparameters_to_optimize</span></code> subsections must be detailed.
+Example: see opt_config_example.yml</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_hyperparameters</span></code> (<em>default = None, dict</em>):  dictionary containing {hyperparameter label : value} items
+for each fixed hyperparameter the user wishes to set in CTLearn config.
+Example: see opt_config_example.yml</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dependent_hyperparameters</span></code> (<em>default = None, dict</em>):  dictionary containing {hyperparameter label : expression to evaluate} items
+for each dependent hyperparameter the user. The expression has access to all {hyperparameter label: value} pairs of the
+<code class="docutils literal notranslate"><span class="pre">hyperparameters_to_optimize</span></code>.
+Example: see opt_config_example.yml</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hyperparameters_to_optimize</span></code> (<em>Mandatory, dict</em>):  dictionary containing
+the settings of the hyperparameters the user wishes to optimize
+following the syntax: {hyperparameter label : {‘type’: …, ‘range’:… ‘step’:…}.
+See: <a class="reference internal" href="api.html#module-ctlearn_optimizer.bayesian_tpe" title="ctlearn_optimizer.bayesian_tpe"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ctlearn_optimizer.bayesian_tpe</span></code></a>, <a class="reference internal" href="api.html#module-ctlearn_optimizer.bayesian_gp" title="ctlearn_optimizer.bayesian_gp"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ctlearn_optimizer.bayesian_gp</span></code></a> and
+<a class="reference internal" href="api.html#module-ctlearn_optimizer.genetic_algorithm" title="ctlearn_optimizer.genetic_algorithm"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ctlearn_optimizer.genetic_algorithm</span></code></a> for settings options.
+Example: see opt_config_example.yml</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="Package Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage.html" class="btn btn-neutral float-left" title="Basic usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Juan Alfonso Redondo Pizarro
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
