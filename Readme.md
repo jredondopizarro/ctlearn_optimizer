@@ -16,7 +16,7 @@ a scalable framework for hyperparameter search and model training, and supports:
 
 * **[Juan Alfonso Redondo Pizarro](https://github.com/jredondopizarro)**
 
-##Dependencies
+## Dependencies
 
 - CTLearn
 - environment_kernels
