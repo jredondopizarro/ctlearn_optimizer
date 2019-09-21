@@ -1,0 +1,23 @@
+# conda env update --file environment.yml
+name: null
+channels:
+    - conda-forge
+dependencies:
+    - hyperopt
+    - matplotlib
+    - nbsphinx
+    - numpy
+    - pandas
+    - pyyaml
+    - scikit-optimize
+    - scipy
+    - scikit-learn
+    - seaborn
+    - setproctitle
+    - sphinx
+    - pip:
+        - ray
+        - sphinx_rtd_theme
+        - environment_kernels
+        
+
