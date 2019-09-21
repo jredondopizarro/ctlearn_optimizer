@@ -157,16 +157,15 @@ def hyperopt_space(hyper_to_opt):
     # loop over the hyperparameters to optimize dictionary and add each
     # hyperparameter to the space
     for key, item in hyper_to_opt.items():
-        if 'step' in item:
-            # get single hyperparameter
-            aux = aux_hyperopt(key,
-                               item['type'],
-                               item['range'],
-                               keys_list,
-                               item.get('step', 1))
-            # add hyperparameter to the whole hyperparameter space
-            space.update(aux[0])
-            # update keys_list
-            keys_list = aux[1]
+        # get single hyperparameter
+        aux = aux_hyperopt(key,
+                           item['type'],
+                           item['range'],
+                           keys_list,
+                           item.get('step', 1))
+        # add hyperparameter to the whole hyperparameter space
+        space.update(aux[0])
+        # update keys_list
+        keys_list = aux[1]
 
     return space
