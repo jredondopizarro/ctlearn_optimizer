@@ -1,6 +1,6 @@
-===================================
+*****************
 Package Reference
-===================================
+*****************
 
 ctlearn_optimizer.optimizer
 ---------------------------
@@ -35,10 +35,10 @@ ctlearn_optimizer.genetic_algorithm
 .. automodule:: ctlearn_optimizer.genetic_algorithm
    :members:
 
-ctlearn_optimizer.auxiliar_plot_functions
+ctlearn_optimizer.auxiliar_functions
 -----------------------------------------
 
-.. automodule:: ctlearn_optimizer.auxiliar_plot_functions
+.. automodule:: ctlearn_optimizer.auxiliar_functions
    :members:
 
 

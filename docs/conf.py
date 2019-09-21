@@ -10,17 +10,18 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+autodoc_mock_imports = ['ctlearn']
 
 # -- Project information -----------------------------------------------------
-
+source_suffix = '.rst'
+master_doc = 'index'
 project = 'ctlearn_optimizer'
-copyright = '2019, Juan Alfonso Redondo Pizarro'
 author = 'Juan Alfonso Redondo Pizarro'
-
+year = '2019'
+copyright = '{0}, {1}'.format(year, author)
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
 
@@ -32,11 +33,13 @@ release = '1.0.0'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
+              'sphinx.ext.autosectionlabel',
               'sphinx.ext.doctest',
               'sphinx.ext.extlinks',
               'sphinx.ext.ifconfig',
               'sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
+              'nbsphinx',
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -52,13 +55,19 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-html_theme = 'sphinx_rtd_theme'
+
+# on_rtd is whether we are on readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if not on_rtd:  # only set the theme if we're building docs locally
+    html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_theme_options = {'navigation_depth': -1}
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False
