@@ -7,53 +7,47 @@ def skopt_space(hyper_to_opt):
     This function creates the space of hyperparameter following skopt syntax.
 
     Parameters:
-        hyper_to_opt [dict]: dictionary containing the configuration of the
+        hyper_to_opt (dict): dictionary containing the configuration of the
             hyperparameters to optimize. This dictionary must follow the next
             syntax:
 
-            >>> hyper_to_opt = {'hyperparam_1': {'type': ...,
-            >>>                                 'range: ...,
-            >>>                                 'step': ...},
-            >>>                 'hyperparam_2': {'type': ...,
-            >>>                                 'range: ...,
-            >>>                                 'step': ...},
-            >>>                  ...
-            >>>                    }
+                .. code:: python
 
-            - Settings available (take a look at the example further
-              clarification):
+                    hyper_to_opt = {'hyperparam_1': {'type': ...,
+                                                    'range: ...,
+                                                    'step': ...},
+                                    'hyperparam_2': {'type': ...,
+                                                    'range: ...,
+                                                    'step': ...},
+                                    ...
+                                    }
 
-                * type: one of ('uniform', 'quniform', 'loguniform',
-                  'choice').
-                * range: if type == 'choice' -> [option1, option2, ...], else
-                  -> [lower_limit, upper_limit].
-                * step: positive integer, space between generated
-                  between numbers  (only for q-types).
+            See the oficial documentation for more details.
 
     Returns:
-        space [list]:
-        space of hyperparameters following the syntax required by the
+        list: space of hyperparameters following the syntax required by the
         gaussian processes optimization algorithm.
 
-    Example:
-        >>> hyper_top_opt = {
-        >>>    'cnn_rnn_dropout':{
-        >>>         'type': 'uniform',
-        >>>         'range': [0,1]},
-        >>>     'optimizer_type':{
-        >>>         'type': 'choice',,
-        >>>         'range': ['Adadelta', 'Adam', 'RMSProp', 'SGD']},
-        >>>     'base_learning_rate':{
-        >>>         'type': 'loguniform',
-        >>>         'range': [-5, 0]},
-        >>>     'layer1_filters':{
-        >>>         'type': 'quniform',
-        >>>         'range': [16, 64],
-        >>>         'step': 1}}
+    Example::
+
+        hyper_top_opt = {
+            'cnn_rnn_dropout':{
+                'type': 'uniform',
+                'range': [0,1]},
+            'optimizer_type':{
+                'type': 'choice',,
+                'range': ['Adadelta', 'Adam', 'RMSProp', 'SGD']},
+            'base_learning_rate':{
+                'type': 'loguniform',
+                'range': [-5, 0]},
+            'layer1_filters':{
+                'type': 'quniform',
+                'range': [16, 64],
+                'step': 1}}
 
     Raises:
-        KeyError: if hyperparameter type is other than 'uniform',
-          'quniform', 'loguniform' or 'choice'.
+        KeyError: if ``type`` is other than ``uniform``, ``quniform``,
+          ``loguniform`` or ``choice``.
     """
 
     space = []

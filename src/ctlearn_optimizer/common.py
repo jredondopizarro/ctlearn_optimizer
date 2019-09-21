@@ -24,22 +24,24 @@ def set_value(dictionary, value, *keys):
     indices). Dictionary cannot be empty.
 
     Parameters:
-        dictionary [dict]: dictionary that contais the key-value pair the user
+        dictionary (dict): dictionary that contais the key-value pair the user
             wishes to modify.
-        value [int, float, string]: value to set.
-        keys [list]: list of keys containing strings and integers.
+        value (int, float, string): value to set.
+        keys (list): list of keys containing strings and integers.
 
     Returns:
-        modified dictionary [dict].
-
-    Example:
-        >>> dictionary = {'a':[0,{'b':1},0]}
-        >>> value = 2
-        >>> keys = ['a', 1, 'b']
-        >>> set_value(dictionary, value, *keys) = {'a':[0,{'b':2},0]}
+        dict: modified dictionary.
 
     Raises:
-        TypeError: if type(dictionary) != dict.
+        TypeError: if type(dictionary) is not ``dict``.
+
+    Example::
+
+        dictionary = {'a':[0,{'b':1},0]}
+        value = 2
+        keys = ['a', 1, 'b']
+        set_value(dictionary, value, *keys) = {'a':[0,{'b':2},0]}
+
     """
 
     if not isinstance(dictionary, dict):
@@ -63,20 +65,22 @@ def create_nested_item(dictionary, *keys):
     indices). The dictionary may or may be not empty.
 
     Parameters:
-        dictionary [dict]: dictionary to modify.
-        keys [list]: list of keys containing strings and integers.
+        dictionary (dict): dictionary to modify.
+        keys (list): list of keys containing strings and integers.
 
     Returns:
-        modified dictionary [dict].
-
-    Example:
-        >>> dictionary = {}
-        >>> keys = ['a', 'b', 1, 'c', 2 , 'd']
-        >>> create_nested_item(dictionary, *keys) =
-        >>> {'a': {'b': [0, {'c': [0, 0, {'d': {}}]}]}}
+        dict : modified dictionary.
 
     Raises:
-        TypeError: if type(dictionary) != dict.
+        TypeError: if type(dictionary) is not ``dict``.
+
+    Example::
+
+        dictionary = {}
+        keys = ['a', 'b', 1, 'c', 2 , 'd']
+        create_nested_item(dictionary, *keys) =
+            {'a': {'b': [0, {'c': [0, 0, {'d': {}}]}]}}
+
     """
 
     if not isinstance(dictionary, dict):
@@ -140,11 +144,11 @@ def auxiliar_modify_params(self, hyperparams):
     """Modify the values of the hyperparameters in CTLearn configuration file.
 
     This function also modifies the logging model_directory of CTLearn and the
-    prediction_file_path.
+    ``prediction_file_path``.
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
-        hyperparams [dict]: dictionary containing values of the
+        hyperparams (dict): dictionary containing values of the
             hyperparameters.
 
     """
@@ -184,9 +188,8 @@ def get_pred_metrics(self):
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
 
     Returns:
-        metrics_pred_to_log [dict]:
-            dictionary containing prediction set metrics to log to the
-            optimization results file.
+        dict: dictionary containing prediction set metrics to log to the
+        ``optimization_results.csv`` file.
 
     """
 
@@ -212,8 +215,9 @@ def get_pred_metrics(self):
     rec = sklearn.metrics.recall_score(labels, predicted_class)
     log_loss = sklearn.metrics.log_loss(labels, predicted_class)
 
-    metrics_pred = {'auc': auc, 'acc': acc, 'bacc': bacc, 'f1': f1,
-                    'prec': prec, 'rec': rec, 'log_loss': log_loss}
+    metrics_pred = {'auc': auc, 'accuracy': acc, 'balanced_accuracy': bacc,
+                    'f1': f1, 'precision': prec, 'recall': rec,
+                    'log_loss': log_loss}
 
     # compute validation user defined metric if required
     if self.user_defined_metric_pred is not None:
@@ -237,9 +241,8 @@ def get_val_metrics(self):
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
 
     Returns:
-        metrics_val_to_log [dict]:
-            dictionary containing validation set metrics to log to the
-            optimization results file.
+        dict: dictionary containing validation set metrics to log to the
+        ``optimization_results.csv`` file.
 
     """
 
@@ -270,8 +273,8 @@ def get_val_metrics(self):
         r'accuracy_proton = [-+]?\d*\.*\d+', val_info)[0][18:])
     loss = float(re.findall(r'loss = [-+]?\d*\.*\d+', val_info)[0][7:])
 
-    metrics_val = {'auc': auc, 'acc': acc, 'acc_gamma': acc_gamma,
-                   'acc_proton': acc_proton, 'loss': loss}
+    metrics_val = {'auc': auc, 'accuracy': acc, 'accuracy_gamma': acc_gamma,
+                   'accuracy_proton': acc_proton, 'loss': loss}
 
     # compute prediction user defined metric
     if self.user_defined_metric_val is not None:
@@ -307,8 +310,8 @@ def set_basic_config(self):
     myconfig['Data']['Input']['batch_size'] = self.basic_config['batch_size']
     myconfig['Model']['model_directory'] = self.basic_config.get(
         'model_directory', 'null')
-    myconfig['Data']['Loading']['validation_split'] = (self.basic_config
-                                                       ['validation_split'])
+    myconfig['Data']['Loading']['validation_split'] = self.basic_config.get(
+        'validation_split', 0.1)
     myconfig['Data']['Processing']['sorting'] = self.basic_config.get(
         'sorting', 'null')
     myconfig['Data']['Loading']['min_num_tels'] = self.basic_config.get(
@@ -367,7 +370,7 @@ def set_basic_config(self):
 def train(self):
     """Run a CTlearn model training.
 
-    Debug is set to False and log_to_file is set to True.
+    ``Debug`` is set to ``False`` and ``log_to_file`` is set to ``True``.
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
@@ -391,7 +394,7 @@ def train(self):
 def predict(self):
     """Predict using a trained CTLearn model.
 
-    Debug is set to False and log_to_file is set to True.
+    ``Debug`` is set to ``False`` and ``log_to_file`` is set to ``True``.
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
@@ -427,12 +430,12 @@ def modify_optimizable_params(self, hyperparams):
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
-        hyperparams [dict]: flat or nested dictionary containing the values of
+        hyperparams (dict): flat or nested dictionary containing the values of
             the hyperparameters to optimize suggested by the optimizer.
 
     Returns:
-        flat dictionary containing the values of the dependent hyperparameters
-        and hyperparameters to optimize  [dict].
+        dict: flat dictionary containing the values of the dependent
+        hyperparameters and hyperparameters to optimize.
     """
 
     # flatten optimizable hyperparameters dict if required
@@ -476,11 +479,12 @@ def modify_optimizable_params(self, hyperparams):
 def save(self):
     """ Save trials of the current run at the working folder as ``trials.pkl``.
 
-    Currently, trial saving for only tree_parzen_estimators, random_search or
-    gaussian_processes based optimization using Ray Tune is supported.
+    Currently, trial saving for only tree parzen estimators, random search or
+    gaussian processes based optimization using Ray Tune is supported.
 
     Raises:
-        NotImplementedError: if self.optimization_type == 'genetic_algorithm'.
+        NotImplementedError: if ``self.optimization_type`` is
+            ``genetic_algorithm``.
     """
 
     if self.optimization_type in ('tree_parzen_estimators',
@@ -499,17 +503,17 @@ def save(self):
 def restore(self):
     """ Load ``trials.pkl`` of a previous run from the ``working_directory``.
 
-    Currently, trial loading for only tree_parzen_estimators, random_search or
-    gaussian_processes based optimization using Ray Tune is supported.
+    Currently, trial loading for only tree parzen_estimators, random search or
+    gaussian processes based optimization using Ray Tune is supported.
 
     Returns:
-        gp_opt_restored [skopt.optimizer.optimizer.Optimizer]:
-            optimizer provided from Skopt (only if self.optimization.type ==
-            'gaussian_processes').
+        skopt.optimizer.optimizer.Optimizer: optimizer provided from Skopt
+        (only if ``self.optimization.type`` is ``gaussian_processes``).
 
 
     Raises:
-        NotImplementedError: if self.optimization_type is genetic_algorithm.
+        NotImplementedError: if ``self.optimization_type`` is
+            ``genetic_algorithm``.
     """
 
     if self.optimization_type in ('tree_parzen_estimators',
@@ -528,14 +532,14 @@ def restore(self):
 
 
 def set_logger(log_path):
-    """ Set up new logger writing to both log_path and stdout.
+    """ Set up new logger writing to both ``log_path`` and ``stdout``.
 
     Ray Tune optimizator runs the objective function on a different Python
     process, so new loggers writing to the same file have to be created when
     necessary.
 
     Parameters:
-        log_path [str]: path to log file.
+        log_path (str): path to log file.
 
     """
     logger = logging.getLogger()
@@ -553,23 +557,23 @@ def set_logger(log_path):
     return logger
 
 
-def optimization_results_logger(self, loss, hyperparams_dict, metrics_pred,
-                                metrics_val, run_time):
+def optimization_results_logger(self, loss, hyperparams_dict, metrics_val,
+                                metrics_pred, run_time):
     """ Write loss, hyperparameters, metrics and run_time to the results file.
 
-    This function log the data to the optimization_results file stored as
+    This function log the data to the optimization results file stored as
     ``optimization_results.csv`` at ``working_directory``.
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
-        loss [float]: value to optimize.
-        hyperparams_dict [dict]: values of the hyperparameters the user wishes
+        loss (float): value to optimize.
+        hyperparams_dict (dict): values of the hyperparameters the user wishes
             to store.
-        metrics_pred [dict]: values of the prediction set metrics the user
+        metrics_val (dict): values of the validation set metrics the user
             wishes to store.
-        metrics_val [dict]: values of the validation set metrics the user
+        metrics_pred (dict): values of the prediction set metrics the user
             wishes to store.
-        run_time [float]: execution time the user wishes to store.
+        run_time (float): execution time the user wishes to store.
 
     """
 
@@ -593,16 +597,16 @@ def ctlearn_objective(self, hyperparams):
     """ Evaluate a CTLearn model and return metric to optimize.
 
     Train a CTLearn model and predict if necessary, get the metrics and log
-    them to the optimization_results file. Also save trials file for resuming
-    training if it has been interrupted.
+    them to the ``optimization_results.csv`` file. Also save trials file for
+    resuming training if it has been interrupted.
 
     Parameters:
         self: ``ctlearn_optimizer.optimizer.Optimizer`` instance.
-        hyperparams [dict]: values of the hyperparameters to evaluate
+        hyperparams (dict): values of the hyperparameters to evaluate
             suggested by the optimizer.
 
     Returns:
-        loss [float]: metric to optimize.
+        float: metric to optimize.
     """
     # set up logger
     logger = set_logger(self.log_path)
@@ -651,8 +655,8 @@ def ctlearn_objective(self, hyperparams):
 
     # write loss, hyperparameters, metrics and run_time to the optimization
     # results file
-    optimization_results_logger(self, loss, hyperparams_dict, metrics_pred,
-                                metrics_val, run_time)
+    optimization_results_logger(self, loss, hyperparams_dict, metrics_val,
+                                metrics_pred, run_time)
 
     # remove training folders in order to avoid space issues in long runs
     if self.remove_training_folders:

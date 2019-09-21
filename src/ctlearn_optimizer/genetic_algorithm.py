@@ -8,49 +8,44 @@ def gen_al_space(self):
     syntax.
 
     Parameters:
-        hyper_to_opt [dict]: dictionary containing the configuration of the
+        hyper_to_opt (dict): dictionary containing the configuration of the
             hyperparameters to optimize. This dictionary must follow the next
             syntax:
 
-            >>> hyper_to_opt = {'hyperparam_1': {'type': ...,
-            >>>                                 'range: ...,
-            >>>                                 'step': ...},
-            >>>                 'hyperparam_2': {'type': ...,
-            >>>                                 'range: ...,
-            >>>                                 'step': ...},
-            >>>                  ...
-            >>>                    }
+            .. code:: python
 
-            - Settings available (take a look at the example further
-              clarification):
+                hyper_to_opt = {'hyperparam_1': {'type': ...,
+                                                 'range: ...,
+                                                 'step': ...},
+                                'hyperparam_2': {'type': ...,
+                                                 'range: ...,
+                                                 'step': ...},
+                                ...
+                                }
 
-                * type: one of ('uniform', 'quniform', 'choice').
-                * range: if type == 'choice' -> [option1, option2, ...], else
-                  -> [lower_limit, upper_limit].
-                * step: positive integer, space between generated
-                  between numbers  (only for q-types).
+            See the oficial documentation for more details.
 
     Returns:
-        space [ray.tune.automl.search_space.SearchSpace]:
-        space of hyperparameters following the syntax required by the genetic
-        algorithm optimizer.
+        ray.tune.automl.search_space.SearchSpace: space of hyperparameters
+        following the syntax required by the genetic algorithm optimizer.
 
-    Example:
-        >>> hyper_top_opt = {
-        >>>    'cnn_rnn_dropout':{
-        >>>         'type': 'uniform',
-        >>>         'range': [0,1]},
-        >>>     'optimizer_type':{
-        >>>         'type': 'choice',,
-        >>>         'range': ['Adadelta', 'Adam', 'RMSProp', 'SGD']},
-        >>>     'layer1_filters':{
-        >>>         'type': 'quniform',
-        >>>         'range': [16, 64],
-        >>>         'step': 1}}
+    Example::
+
+         hyper_top_opt = {
+            'cnn_rnn_dropout':{
+                 'type': 'uniform',
+                 'range': [0,1]},
+             'optimizer_type':{
+                 'type': 'choice',,
+                 'range': ['Adadelta', 'Adam', 'RMSProp', 'SGD']},
+             'layer1_filters':{
+                 'type': 'quniform',
+                 'range': [16, 64],
+                 'step': 1}}
 
     Raises:
-        KeyError: if hyperparameter space type is other than uniform,
-            quniform or choice.
+        KeyError: if ``type`` is other than ``uniform``, ``quniform`` or
+            ``choice``.
     """
 
     space = []

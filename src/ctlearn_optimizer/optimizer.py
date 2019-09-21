@@ -13,6 +13,7 @@ from ray.tune import run
 from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.skopt import SkOptSearch
 from ray.tune.automl import GeneticSearch
+import hyperopt as hpo
 import ctlearn_optimizer.bayesian_tpe as bayesian_tpe
 import ctlearn_optimizer.bayesian_gp as bayesian_gp
 import ctlearn_optimizer.genetic_algorithm as genetic_algorithm
@@ -25,8 +26,8 @@ multiprocessing.current_process().authkey = b'1234'
 class Optimizer:
     """ Basic class for an optimizer.
 
-    Currently, only tree_parzen_estimators, random_search, gaussian_processes
-    and genetic_algorithm based optimization using Ray Tune is supported.
+    Currently, only tree parzen estimators, random search, gaussian processes
+    and genetic algorithm based optimization using Ray Tune is supported.
 
     """
 
@@ -34,7 +35,7 @@ class Optimizer:
         """ Initialize the optimizer:
 
             - Set optimizer attributes.
-            - Set logger writing to both ``optimization.log`` and stdout.
+            - Set logger writing to both ``optimization.log`` and ``stdout``.
             - Load trials file from ``working_directory/trials.pkl``
               if required, thus allowing to resume a past optimization run.
             - Load optimization results file from
@@ -44,16 +45,17 @@ class Optimizer:
               this file for further analysis.
 
         Parameters:
-            opt_config [dict]: loaded optimization configuration file.
+            opt_config (dict): loaded optimization configuration file.
 
         Raises:
-            NotImplementedError: if self.optimization_type is genetic_algorithm
-                and self.reload_trials is True.
+            NotImplementedError: if ``self.optimization_type`` is
+                ``genetic_algorithm`` and ``self.reload_trials`` is ``True``.
         """
 
         # set working directory path
-        self.working_directory = opt_config.get('working_directory',
-                                                os.getcwd())
+        gen_settings = opt_config['General_settings']
+        self.working_directory = gen_settings.get('working_directory',
+                                                  os.getcwd())
 
         # create new logger
         self.log_path = os.path.join(self.working_directory,
@@ -72,50 +74,57 @@ class Optimizer:
         self.counter = manager.Value('i', 0)
 
         # set random state seed for reproducible results
-        self.random_state = opt_config.get('random_state', None)
+        self.random_state = gen_settings.get('random_state', None)
 
         # set hardware resources
-        self.num_cpus = opt_config['num_cpus']
-        self.num_cpus_per_trial = opt_config['num_cpus_per_trial']
-        self.num_gpus = opt_config['num_gpus']
-        self.num_gpus_per_trial = opt_config['num_gpus_per_trial']
+        self.num_cpus = gen_settings['num_cpus']
+        self.num_cpus_per_trial = gen_settings['num_cpus_per_trial']
+        self.num_gpus = gen_settings['num_gpus']
+        self.num_gpus_per_trial = gen_settings['num_gpus_per_trial']
 
         # set file paths
         self.ctlearn_config_path = os.path.join(self.working_directory,
-                                                opt_config['ctlearn_config'])
+                                                gen_settings['ctlearn_config'])
         self.trials_file_path = os.path.join(self.working_directory,
                                              'trials.pkl')
         self.optim_results_path = os.path.join(self.working_directory,
                                                'optimization_results.csv')
 
-        self.remove_training_folders = opt_config.get(
+        self.remove_training_folders = gen_settings.get(
             'remove_training_folders', True)
         # set optimizer configuration
-        self.num_parallel_trials = opt_config.get('num_parallel_trials', 1)
-        self.mode = opt_config.get('mode', 'max')
-        self.n_initial_points = opt_config.get('n_initial_points', 30)
-        self.optimization_type = opt_config['optimization_type']
-        self.num_max_evals = opt_config['num_max_evals']
+        self.num_parallel_trials = gen_settings.get('num_parallel_trials', 1)
+        self.mode = gen_settings.get('mode', 'max')
+        self.n_initial_points = gen_settings.get('n_initial_points', 30)
+        self.optimization_type = gen_settings['optimization_type']
+        self.num_max_evals = gen_settings['num_max_evals']
 
         self.logger.info('Optimization algorithm:{}'.format(
             self.optimization_type))
 
-        self.metric_to_optimize = opt_config['metric_to_optimize']
-        self.predict = opt_config.get('predict', False)
-        self.data_set_to_optimize = opt_config.get('data_set_to_optimize',
-                                                   'validation')
+        self.metric_to_optimize = gen_settings['metric_to_optimize']
+        self.predict = gen_settings.get('predict', False)
+        self.data_set_to_optimize = gen_settings.get('data_set_to_optimize',
+                                                     'validation')
         if self.data_set_to_optimize == 'prediction':
             assert self.predict is True
 
-        self.tpe_config = opt_config.get('tree_parzen_estimators_config', None)
-        self.gp_config = opt_config.get('gaussian_processes_config', None)
-        self.ga_config = opt_config.get('genetic_algorithm_config', None)
+        if self.optimization_type == 'genetic_algorithm':
+            optimizer_info = opt_config['Optimizer_settings']
+            self.ga_config = optimizer_info['genetic_algorithm_config']
+        else:
+            optimizer_info = opt_config.get('Optimizer_settings', None)
+            self.ga_config = optimizer_info.get('genetic_algorithm_config',
+                                                None)
+        self.tpe_config = optimizer_info.get('tree_parzen_estimators_config',
+                                             None)
+        self.gp_config = optimizer_info.get('gaussian_processes_config', None)
 
         # set ctlearn basic configuration
-        self.basic_config = opt_config['Basic_config']
+        self.basic_config = opt_config['CTLearn_settings']
 
         # set hyperparameters logging and configuration
-        hyperparameters_info = opt_config['Hyperparameters']
+        hyperparameters_info = opt_config['Hyperparameters_settings']
         self.hyperparams_to_log = (hyperparameters_info
                                    ['hyperparameters_to_log'])
         self.hyperparameters_config = (hyperparameters_info['config'])
@@ -128,24 +137,25 @@ class Optimizer:
             'dependent_hyperparameters', None)
 
         # set metrics logging and configuration
-        self.list_metrics_val_to_log = opt_config['metrics_val_to_log']
-        self.list_metrics_pred_to_log = opt_config.get('metrics_pred_to_log',
-                                                       [])
+        self.list_metrics_val_to_log = gen_settings.get('metrics_val_to_log',
+                                                        [])
+        self.list_metrics_pred_to_log = gen_settings.get('metrics_pred_to_log',
+                                                         [])
         if self.list_metrics_pred_to_log:
             assert self.predict is True
         else:
             assert self.data_set_to_optimize != 'prediction'
 
-        self.user_defined_metric_val = opt_config.get(
+        self.user_defined_metric_val = gen_settings.get(
             'user_defined_metric_val', None)
-        self.user_defined_metric_pred = opt_config.get(
+        self.user_defined_metric_pred = gen_settings.get(
             'user_defined_metric_pred', None)
 
         # create hyperparameters space, used for trial reloading
         hyperparameter_space = self.create_space_hyperparams()
 
         # set trial reloading configuration and create optimization algorithm
-        self.reload_trials = opt_config.get('reload_trials', False)
+        self.reload_trials = gen_settings.get('reload_trials', False)
 
         if self.reload_trials:
             if self.optimization_type == 'genetic_algorithm':
@@ -175,6 +185,10 @@ class Optimizer:
                         self.create_optimization_algorithm(
                             hyperparameter_space)
                     common.restore(self)
+
+                    if self.optimization_type == 'random_search':
+                        self.optimization_algorithm.algo = hpo.rand.suggest
+
                     # set global run iteration value to start from the
                     # number of trials of the reloaded run
                     self.iteration.value = len(trials[0].trials)
@@ -191,7 +205,7 @@ class Optimizer:
             self.iteration.value = 0
 
         # set optimization results configuration
-        reload_optimization_results = opt_config.get(
+        reload_optimization_results = gen_settings.get(
             'reload_optimization_results', False)
 
         if reload_optimization_results:
@@ -230,18 +244,18 @@ class Optimizer:
     def create_space_hyperparams(self):
         """ Create space of hyperparameters following required syntax.
 
-        Currently, only tree_parzen_estimators and random_search spaces based
-        on hyperopt, gaussian_processes space based on skopt and
-        genetic_algorithm space based on ray.tune.automl are supported.
+        Currently, only tree parzen estimators and random search spaces based
+        on hyperopt, gaussian processes space based on skopt and
+        genetic algorithm space based on ray.tune.automl are supported.
 
         Returns:
             space of hyperparameters following the syntax required by the
             optimization algorithm.
 
         Raises:
-            NotImplementedError if self.optimization_type is other than
-                tree_parzen_estimators, random_search, gaussian_processes or
-                genetic_algorithm.
+            NotImplementedError: if ``self.optimization_type`` is other than
+                ``tree_parzen_estimators``, ``random_search``,
+                ``gaussian_processes`` or ``genetic_algorithm``.
         """
 
         hyper_to_opt = self.hyperparams_to_optimize
@@ -261,12 +275,12 @@ class Optimizer:
     def create_optimization_algorithm(self, hyperparameter_space):
         """ Create optimization algorithm for Ray Tune.
 
-        Currently, only tree_parzen_estimators, random_search,
-        gaussian_processes and genetic_algorithm based optimization using Ray
+        Currently, only tree parzen estimators, random search,
+        gaussian processes and genetic algorithm based optimization using Ray
         Tune is supported.
 
         Parameters:
-            space [dict, list, ray.tune.automl.search_space.SearchSpace]:
+            space (dict, list or ray.tune.automl.search_space.SearchSpace):
                 space of hyperparameters following the syntax required by
                 the optimization algorithm.
 
@@ -275,8 +289,8 @@ class Optimizer:
 
         Raises:
             NotImplementedError: if self.optimization_type is other than
-                tree_parzen_estimators, random_search, gaussian_processes or
-                genetic_algorithm.
+                ``tree_parzen_estimators``, ``random_search``,
+                ``gaussian_processes`` or ``genetic_algorithm``.
         """
 
         if self.optimization_type == 'tree_parzen_estimators':
@@ -296,6 +310,7 @@ class Optimizer:
                 metric='loss',
                 mode=self.mode,
                 random_state_seed=self.random_state)
+            algorithm.algo = hpo.rand.suggest
 
         elif self.optimization_type == 'gaussian_processes':
             if not self.reload_trials:
@@ -344,11 +359,11 @@ class Optimizer:
         """ Evaluate a CTLearn model and return metric to optimize.
 
         Parameters:
-            hyperparams [dict]: set of hyperparameters to evaluate provided by
+            hyperparams (dict): set of hyperparameters to evaluate provided by
                 the optimizer.
 
         Returns:
-            metric to optimize [float].
+            float: metric to optimize.
 
         """
 
@@ -369,24 +384,26 @@ class Optimizer:
         return metric
 
     def optimize(self, objective_function):
-        """ Start the optimization of objective_function using Ray Tune.
+        """ Start the optimization of ``objective_function`` using Ray Tune.
 
-        Currently, only tree_parzen_estimators, random_search,
-        gaussian_processes and genetic_algorithm based optimization using Ray
+        Currently, only tree parzen estimators, random search,
+        gaussian processes and genetic algorithm based optimization using Ray
         Tune is supported.
 
         Parameters:
             objective_function: function to optimize following the syntax:
 
-                >>> def(hyperparams, reporter):
-                >>>     ...
-                >>>     # compute loss to optimize
-                >>>     ...
-                >>>     return(loss=loss)
+                .. code:: python
+
+                    def(hyperparams, reporter):
+                        ...
+                        # compute loss to optimize
+                        ...
+                        reporter(loss=loss)
 
         Returns:
-            ray_result [ExperimentAnalysis]:
-                object used for analyzing results from run().
+            ExperimentAnalysis: object used for analyzing results from Tune
+            ``run()``.
 
         """
 
@@ -462,13 +479,13 @@ class Optimizer:
     def optimize_ctlearn_model(self):
         """ Start the optimization of a CTLearn model using Ray Tune.
 
-        Currently, only tree_parzen_estimators, random_search,
-        gaussian_processes and genetic_algorithm based optimization using Ray
+        Currently, only tree parzen estimators, random search,
+        gaussian processes and genetic algorithm based optimization using Ray
         Tune is supported.
 
         Returns:
-            result [ExperimentAnalysis]:
-                object used for analyzing results from Tune run().
+            ExperimentAnalysis: object used for analyzing results from Tune
+            ``run()``.
 
         """
 
