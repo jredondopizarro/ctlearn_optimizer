@@ -34,13 +34,14 @@ Now, activate the conda environment created in the first step:
 
     conda env update --file </installation/path>/environment.yml
 
-    .. note::
-        Optional: install the dependencies for building the CTLearn Optimizer's
-        documentation from the source.
+.. note::
 
-        .. code-block:: bash
+    Optional: install the dependencies for building the CTLearn Optimizer's
+    documentation from the source.
 
-            conda env update --file </installation/path>/docs_environment.yml
+    .. code-block:: bash
+
+        conda env update --file </installation/path>/docs_environment.yml
 
 4. Finally, install CTLearn Optimizer into  the conda environment with pip:
 

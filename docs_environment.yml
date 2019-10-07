@@ -8,8 +8,8 @@ dependencies:
     - pip
     - sphinx
     - pip:
-        - sphinx_rtd_theme
         - sphinx-autoapi
+        - sphinx_rtd_theme
     
         
 
