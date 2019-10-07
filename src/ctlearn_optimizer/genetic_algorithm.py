@@ -31,7 +31,7 @@ def gen_al_space(self):
 
     Example::
 
-         hyper_top_opt = {
+        hyper_top_opt = {
             'cnn_rnn_dropout':{
                 'type': 'uniform',
                 'range': [0,1]},

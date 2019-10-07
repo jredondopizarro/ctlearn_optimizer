@@ -14,11 +14,11 @@ def skopt_space(hyper_to_opt):
             .. code:: python
 
                 hyper_to_opt = {'hyperparam_1': {'type': ...,
-                                                'range: ...,
-                                                'step': ...},
+                                                 'range: ...,
+                                                 'step': ...},
                                 'hyperparam_2': {'type': ...,
-                                                'range: ...,
-                                                'step': ...},
+                                                 'range: ...,
+                                                 'step': ...},
                                 ...
                                 }
 

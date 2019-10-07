@@ -33,7 +33,7 @@ def hyperopt_space(hyper_to_opt):
 
     Example::
 
-         hyper_top_opt = {
+        hyper_top_opt = {
             'cnn_rnn_dropout':{
                 'type': 'uniform',
                 'range': [0,1]},
