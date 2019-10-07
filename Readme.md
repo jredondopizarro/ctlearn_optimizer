@@ -21,7 +21,6 @@ a scalable framework for hyperparameter search and model training, and supports:
 - CTLearn
 - environment_kernels
 - Hyperopt
-- ipython
 - Matplotlib
 - nbsphinx
 - NumPy

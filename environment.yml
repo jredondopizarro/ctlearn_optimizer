@@ -4,7 +4,6 @@ channels:
     - conda-forge
 dependencies:
     - hyperopt
-    - ipython
     - matplotlib
     - nbsphinx
     - numpy
