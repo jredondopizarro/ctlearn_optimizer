@@ -26,6 +26,7 @@ a scalable framework for hyperparameter search and model training, and supports:
 - nbsphinx
 - NumPy
 - Pandas
+- pip
 - PyYAML 
 - Ray
 - Scikit-Optimize 

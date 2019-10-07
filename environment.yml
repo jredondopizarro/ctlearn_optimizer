@@ -9,6 +9,7 @@ dependencies:
     - nbsphinx
     - numpy
     - pandas
+    - pip
     - pyyaml
     - scikit-optimize
     - scipy
